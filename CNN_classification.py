@@ -33,7 +33,7 @@ import os
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 # Test prepreocess data
-PATH = '/Users/sarramargi/Downloads/DL_Git_Repository/Pokemon_classification/Initial_dataset'
+PATH = './PokemonData'
 classes = os.listdir(PATH)
 
 c1_path=os.path.join(PATH, classes[1]) # different folders of Pokemon, considered as outputs
