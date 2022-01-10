@@ -130,3 +130,5 @@ dmypy.json
 
 #Image dataset 
 !/PokemonData/*.*
+PokemonData/.DS_Store
+*.jpg
