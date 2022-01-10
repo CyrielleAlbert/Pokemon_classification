@@ -31,6 +31,7 @@ from sklearn.neighbors import KNeighborsClassifier
 import os
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from utils import train_test_split
 
 # Test prepreocess data
 PATH = './PokemonData'
@@ -39,6 +40,12 @@ classes = os.listdir(PATH)
 c1_path=os.path.join(PATH, classes[1]) # different folders of Pokemon, considered as outputs
 c1_data_path=[os.path.join(c1_path, img) for img in os.listdir(c1_path)]
 len(c1_data_path)
+
+# Preprocessing 
+image_size = (256,256)
+seed=5
+validation_split=0.2
+dataset_train,dataset_test = train_test_split(PATH,image_size,seed,validation_split)
 
 # Normailisation
 IDG = ImageDataGenerator(rescale = 1./255 )
