@@ -132,6 +132,6 @@ dmypy.json
 !/PokemonData/*.*
 PokemonData/.DS_Store
 *.jpg
-#*.png 
-#*.svg
-#*.jpeg
+*.png 
+*.svg
+*.jpeg
