@@ -9,11 +9,13 @@ Created on Mon Jan 10 13:56:57 2022
 import numpy as np # linear algebra
 import tensorflow
 from tensorflow import keras
+from sklearn.utils import validation # linear algebra
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Input, Conv2D, MaxPooling2D, UpSampling2D, Dropout, Dense, Flatten, InputLayer, concatenate
 from tensorflow.keras.layers import Conv2DTranspose
 from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 
 import cv2 as cv
 # import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
@@ -31,7 +33,9 @@ import os
 from tensorflow.keras import preprocessing
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-from utils import train_test_split
+from utils import train_test_split as ts
+from utils import train_test_split2
+from sklearn.model_selection import train_test_split 
 
 # Test prepreocess data
 PATH = './PokemonData'
@@ -42,18 +46,23 @@ classes = ((f for f in os.listdir(PATH) if not f.startswith(".DS_Store"))) # Del
 # len(c1_data_path)
 
 # Preprocessing 
-image_size = (256,256)
+image_size = (150,150)
 seed=5
 validation_split=0.2
 # shuffle='False'
-dataset_train,dataset_test = train_test_split(PATH,image_size,seed,validation_split)
+# dataset_train,dataset_test = train_test_split(PATH,image_size,seed,validation_split)
+X,y = train_test_split2(PATH,image_size,seed,validation_split)
 
-# Normailisation
-IDG = ImageDataGenerator(rescale = 1./255 )
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
+y_train = to_categorical(y_train)
+y_test = to_categorical(y_test)
 
-train_data = IDG.flow_from_directory(PATH,target_size=(256,256),batch_size=32) 
+# # Normailisation
+# IDG = ImageDataGenerator(rescale = 1./255 )
 
-img_shape=(256,256,3) # 3 car RGB
+# train_data = IDG.flow_from_directory(PATH,target_size=(256,256),batch_size=32) 
+
+img_shape=(150,150,3) # 3 car RGB
 
 # Model | CNN Classique
 model_classic_CNN = Sequential(name='Classic_CNN')
@@ -79,7 +88,7 @@ model_classic_CNN.compile(optimizer='adam',
              metrics=['accuracy']
              )
 
-hist = model_classic_CNN.fit_generator(train_data,epochs=2) #Changer nb epochs
+hist = model_classic_CNN.fit(X_train,y_train,validation_data=(X_test,y_test),epochs=100,batch_size=32) #Changer nb epochs
 
 # plt.style.use('fivethirtyeight')
 # plt.figure(figsize=(14,14))
