@@ -35,7 +35,7 @@ from utils import train_test_split
 
 # Test prepreocess data
 PATH = './PokemonData'
-# classes = os.listdir(PATH)
+classes = ((f for f in os.listdir(PATH) if not f.startswith(".DS_Store"))) # Deletes hidden file .DS_Store on Finder of MacOS
 
 # c1_path=os.path.join(PATH, classes[1]) # different folders of Pokemon, considered as outputs
 # c1_data_path=[os.path.join(c1_path, img) for img in os.listdir(c1_path)]
@@ -45,6 +45,7 @@ PATH = './PokemonData'
 image_size = (256,256)
 seed=5
 validation_split=0.2
+# shuffle='False'
 dataset_train,dataset_test = train_test_split(PATH,image_size,seed,validation_split)
 
 # Normailisation
