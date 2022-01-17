@@ -33,11 +33,11 @@ def train_test_split2(path,img_size,seed,validation_split):
                 print(e)
         i +=1
     print(np.array(X).shape,len(y))
-
+    np.savez("dataset-{0}-{1}.npz".format(img_size[0],img_size[1]) ,x=X,y=y)
     return np.array(X),np.array(y)
 
-PATH = './PokemonData'
-image_size = (150,150)
-seed=5
-validation_split=0.2
-X,y = train_test_split2(PATH,image_size,seed,validation_split)
+# PATH = './PokemonData'
+# image_size = (150,150)
+# seed=5
+# validation_split=0.2
+# X,y = train_test_split2(PATH,image_size,seed,validation_split)
