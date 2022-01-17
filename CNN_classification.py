@@ -35,6 +35,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from utils import get_dataset 
 from utils import get_dataset_v2
+from utils import get_test_dataset
 from sklearn.model_selection import train_test_split 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -69,8 +70,20 @@ values = eval.values()
 plt.figure()
 plt.bar(names, values)
 
+# Reduction size
+
+X_reduced,y_reduced = get_test_dataset(X,y,0.25)
+
+## Analysis of dataset
+eval = pd.DataFrame(y_reduced,columns=["y_reduced"])["y_reduced"].value_counts()
+eval = dict(eval)
+names = eval.keys()
+values = eval.values()
+plt.figure()
+plt.bar(names, values)
+plt.show()
 #Train-test split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=validation_split,random_state=seed)
+X_train, X_test, y_train, y_test = train_test_split(X_reduced, y_reduced, test_size=validation_split,random_state=seed)
 y_train = to_categorical(y_train,len(classes))
 y_test = to_categorical(y_test,len(classes))
 
@@ -121,41 +134,46 @@ print(X_train.shape)
 model_CNN_simple = Sequential(name="Simple_CNN")
 
 # conv layers
-
-model_CNN_simple.add(Conv2D(128, 3, activation='relu', input_shape=X_train.shape[1:],name="Conv1"))
-model_CNN_simple.add(MaxPooling2D(name="Pool1"))
-
-
-model_CNN_simple.add(Conv2D(128, 3, activation='relu',name="Conv2"))
-model_CNN_simple.add(MaxPooling2D(name="Pool2"))
-
-model_CNN_simple.add(Conv2D(128, 3, strides=(2,2), padding='same', activation='relu',name="Conv3"))
-model_CNN_simple.add(MaxPooling2D(pool_size=(2,2),name="Pool3"))
-
-model_CNN_simple.add(BatchNormalization())
-model_CNN_simple.add(Conv2D(64, 3,strides=(2,2), padding='same', activation='relu',name="Conv4"))
-model_CNN_simple.add(MaxPooling2D(pool_size=(2,2),name="Pool4"))
-
-model_CNN_simple.add(Flatten()) # flatten output of conv
-model_CNN_simple.add(Dropout(0.25))
-
-# hidden layers
-model_CNN_simple.add(Dense(1024, activation='relu',name="Dense1"))
-
-model_CNN_simple.add(Dense(512, activation='relu',name="Dense2"))
-
-# output layer
-model_CNN_simple.add(Dense(len(classes), activation='softmax',name="Dense3"))
+def basic_CNN_model(activation='relu'):
+    model_CNN_simple.add(Conv2D(128, 3, activation=activation, input_shape=X_train.shape[1:],name="Conv1"))
+    model_CNN_simple.add(MaxPooling2D(name="Pool1"))
 
 
+    model_CNN_simple.add(Conv2D(128, 3, activation=activation,name="Conv2"))
+    model_CNN_simple.add(MaxPooling2D(name="Pool2"))
+
+    # model_CNN_simple.add(Conv2D(128, 3, strides=(2,2), padding='same', activation=activation,name="Conv3"))
+    # model_CNN_simple.add(MaxPooling2D(pool_size=(2,2),name="Pool3"))
+
+    model_CNN_simple.add(BatchNormalization())
+    model_CNN_simple.add(Conv2D(64, 3,strides=(2,2), padding='same', activation=activation,name="Conv4"))
+    model_CNN_simple.add(MaxPooling2D(pool_size=(2,2),name="Pool4"))
+
+    model_CNN_simple.add(Flatten()) # flatten output of conv
+    model_CNN_simple.add(Dropout(0.25))
+
+    # hidden layers
+    model_CNN_simple.add(Dense(1024, activation=activation,name="Dense1"))
+
+    model_CNN_simple.add(Dense(512, activation=activation,name="Dense2"))
+
+    # output layer
+    model_CNN_simple.add(Dense(len(classes), activation='softmax',name="Dense3"))
+    return model_CNN_simple
+
+model_CNN_simple = basic_CNN_model()
 model_CNN_simple.summary()
 
 model_CNN_simple.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 hist = model_CNN_simple.fit(X_train,y_train,validation_data=(X_test,y_test),epochs=30,batch_size=32) #Changer nb epochs
 
+model_CNN_simple.save("model_and_weight-{0}-{1}-{2}.h5".format('adam',image_size[0],image_size[1]))
+
 plt.style.use('fivethirtyeight')
 plt.figure(figsize=(14,14))
 plt.plot(hist.history['accuracy'],label='accuracy',color='green')
+plt.plot(hist.history['val_accuracy'],label='accuracy',color='red')
+plt.legend(["training data","validation data"])
 plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
 plt.yticks(np.arange(0, 1, step=0.04))

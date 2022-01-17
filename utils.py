@@ -44,5 +44,6 @@ def get_dataset_v2(path,img_size):
 
 def get_test_dataset(X,y,reduction_rate):
     X_reduced,_,y_reduced,_ = train_test_split(X,y, train_size=reduction_rate,stratify=y)
+    print("Reduced")
     return X_reduced,y_reduced
 
