@@ -6,8 +6,6 @@ Created on Mon Jan 10 13:56:57 2022
 @author: sarramargi
 """
 
-from pyexpat import model
-from re import M
 import numpy as np # linear algebra
 import tensorflow
 from tensorflow import keras
@@ -35,8 +33,8 @@ import os
 from tensorflow.keras import preprocessing
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-from utils import train_test_split as ts
-from utils import train_test_split2
+from utils import get_dataset 
+from utils import get_dataset_v2
 from sklearn.model_selection import train_test_split 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -49,19 +47,20 @@ classes = [f for f in os.listdir(PATH) if not f.startswith(".DS_Store")] # Delet
 # len(c1_data_path)
 
 # Preprocessing 
-image_size = (32,32)
+image_size = (150,150)
 seed=5
 validation_split=0.2
 # shuffle='False'
 # dataset_train,dataset_test = train_test_split(PATH,image_size,seed,validation_split)
 
 if "dataset-{0}-{1}.npz".format(image_size[0],image_size[1]) not in os.listdir("./"):
-    X,y = train_test_split2(PATH,image_size,seed,validation_split)
+    X,y = get_dataset_v2(PATH,image_size)
 else: 
     dataset = np.load("dataset-{0}-{1}.npz".format(image_size[0],image_size[1]))
     X,y = dataset["x"],dataset["y"]
     #y = y.reshape((150,1))
 print("Dataset Loaded!")
+
 # Analysis of dataset
 eval = pd.DataFrame(y,columns=["y"])["y"].value_counts()
 eval = dict(eval)
@@ -71,7 +70,7 @@ plt.figure()
 plt.bar(names, values)
 
 #Train-test split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20,random_state=10)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=validation_split,random_state=seed)
 y_train = to_categorical(y_train,len(classes))
 y_test = to_categorical(y_test,len(classes))
 
@@ -83,8 +82,8 @@ for i in range(8):
 #plt.show()
 # Normailisation
 
-X_train = X_train/255
-X_test = X_test/255
+# X_train = X_train/255
+# X_test = X_test/255
 print(X_train.shape)
 # IDG = ImageDataGenerator(rescale = 1./255 )
 
@@ -130,8 +129,8 @@ model_CNN_simple.add(MaxPooling2D(name="Pool1"))
 model_CNN_simple.add(Conv2D(128, 3, activation='relu',name="Conv2"))
 model_CNN_simple.add(MaxPooling2D(name="Pool2"))
 
-# model_CNN_simple.add(Conv2D(128, 3, strides=(2,2), padding='same', activation='relu',name="Conv3"))
-# model_CNN_simple.add(MaxPooling2D(pool_size=(2,2),name="Pool3"))
+model_CNN_simple.add(Conv2D(128, 3, strides=(2,2), padding='same', activation='relu',name="Conv3"))
+model_CNN_simple.add(MaxPooling2D(pool_size=(2,2),name="Pool3"))
 
 model_CNN_simple.add(BatchNormalization())
 model_CNN_simple.add(Conv2D(64, 3,strides=(2,2), padding='same', activation='relu',name="Conv4"))
@@ -151,12 +150,12 @@ model_CNN_simple.add(Dense(150, activation='softmax',name="Dense3"))
 
 model_CNN_simple.summary()
 
-model_CNN_simple.compile(optimizer='adam', loss='mse', metrics=['mse'])
+model_CNN_simple.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 hist = model_CNN_simple.fit(X_train,y_train,validation_data=(X_test,y_test),epochs=500,batch_size=32) #Changer nb epochs
 
 plt.style.use('fivethirtyeight')
 plt.figure(figsize=(14,14))
-plt.plot(hist.history['mse'],label='mse',color='green')
+plt.plot(hist.history['accuracy'],label='accuracy',color='green')
 plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
 plt.yticks(np.arange(0, 1, step=0.04))
