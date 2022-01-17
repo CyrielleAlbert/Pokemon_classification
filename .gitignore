@@ -135,3 +135,6 @@ PokemonData/.DS_Store
 *.png 
 *.svg
 *.jpeg
+*.npz
+*.jpeg
+
