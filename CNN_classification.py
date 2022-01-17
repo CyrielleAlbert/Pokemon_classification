@@ -89,7 +89,7 @@ print(X_train.shape)
 
 # train_data = IDG.flow_from_directory(PATH,target_size=(256,256),batch_size=32) 
 
-img_shape=(32,32,3) # 3 car RGB
+#img_shape=(32,32,3) # 3 car RGB
 
 # Model | CNN Classique
 # model_classic_CNN = Sequential(name='Classic_CNN')
@@ -145,13 +145,13 @@ model_CNN_simple.add(Dense(1024, activation='relu',name="Dense1"))
 model_CNN_simple.add(Dense(512, activation='relu',name="Dense2"))
 
 # output layer
-model_CNN_simple.add(Dense(150, activation='softmax',name="Dense3"))
+model_CNN_simple.add(Dense(len(classes), activation='softmax',name="Dense3"))
 
 
 model_CNN_simple.summary()
 
 model_CNN_simple.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-hist = model_CNN_simple.fit(X_train,y_train,validation_data=(X_test,y_test),epochs=500,batch_size=32) #Changer nb epochs
+hist = model_CNN_simple.fit(X_train,y_train,validation_data=(X_test,y_test),epochs=30,batch_size=32) #Changer nb epochs
 
 plt.style.use('fivethirtyeight')
 plt.figure(figsize=(14,14))
