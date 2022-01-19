@@ -33,7 +33,7 @@ def get_dataset_v2(path,img_size):
                 print(e)
         i +=1
     print(np.array(X).shape,len(y))
-    np.savez("dataset-{0}-{1}.npz".format(img_size[0],img_size[1]) ,x=X,y=y)
+    np.savez("./Datasets/dataset-{0}-{1}.npz".format(img_size[0],img_size[1]) ,x=X,y=y)
     return np.array(X),np.array(y)
 
 # PATH = './PokemonData'
