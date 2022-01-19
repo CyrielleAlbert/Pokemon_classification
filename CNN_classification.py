@@ -6,12 +6,13 @@ Created on Mon Jan 10 13:56:57 2022
 @author: sarramargi
 """
 
+from pyexpat import model
 import numpy as np # linear algebra
 import tensorflow
 from tensorflow import keras
 from sklearn.utils import validation # linear algebra
 from tensorflow.keras.models import Sequential, Model, load_model
-from tensorflow.keras.layers import Input, Conv2D, MaxPooling2D, UpSampling2D, Dropout, Dense, Flatten, InputLayer, concatenate
+from tensorflow.keras.layers import Input, Conv2D, MaxPooling2D, UpSampling2D, Dropout, Dense, Flatten, InputLayer, concatenate, GlobalAveragePooling2D
 from tensorflow.keras.layers import Conv2DTranspose
 from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.callbacks import TensorBoard
@@ -39,6 +40,8 @@ from utils import get_test_dataset
 from sklearn.model_selection import train_test_split 
 import pandas as pd
 import matplotlib.pyplot as plt
+from tensorflow.keras.applications import DenseNet169
+from tensorflow.keras.applications.mobilenet import preprocess_input
 
 # GLOBAL VARIABLE
 PATH = './PokemonData'
@@ -193,7 +196,6 @@ def run():
         model_CNN_simple = load_model(filepath)
         loss,acc = model_CNN_simple.evaluate(X_test,y_test,verbose=2)
         print(loss,acc)
-
     # plt.style.use('fivethirtyeight')
     # plt.figure(figsize=(14,14))
     # plt.plot(hist.history['accuracy'],label='accuracy',color='green')
@@ -204,7 +206,39 @@ def run():
     # plt.yticks(np.arange(0, 1, step=0.04))
     # plt.show()
 
-run()
+
+# DenseNet
+def run2():
+    img_size = (150,150)
+    X_train,y_train,X_test,y_test = preprocessing(PATH="./PokemonData",image_size = img_size)
+    #X_train_prepro = preprocess_input(X_train)
+    model_denseNet169 = Sequential(name="DenseNet169")
+    model_denseNet169.add(DenseNet169(include_top=False,input_shape=(150,150,3),pooling="avg"))
+    for layer in model_denseNet169.layers[:675]:
+        layer.trainable = False
+
+    for layer in model_denseNet169.layers[675:]:
+        layer.trainable = True
+    #model_denseNet169.add(GlobalAveragePooling2D())
+    model_denseNet169.add(Dense(len(classes), activation='softmax',name="Dense3"))
+    model_denseNet169.summary()
+    model_denseNet169.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    hist = model_denseNet169.fit(X_train,y_train,validation_data=(X_test,y_test),epochs=30,batch_size=32)
+    model_denseNet169.save("./models/model_DenseNet169_and_weight-{0}-{1}-{2}.h5".format('adam',img_size[0],img_size[1]))
+   
+    plt.style.use('fivethirtyeight')
+    plt.figure(figsize=(14,14))
+    plt.plot(hist.history['accuracy'],label='accuracy',color='green')
+    plt.plot(hist.history['val_accuracy'],label='accuracy',color='red')
+    plt.legend(["training data","validation data"])
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.yticks(np.arange(0, 1, step=0.04))
+    plt.show()
+
+
+
+run2()
 
 # plt.figure(figsize=(20,20))
 # #for _ in range(3):
