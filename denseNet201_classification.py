@@ -28,18 +28,15 @@ classes = [f for f in os.listdir(PATH) if not f.startswith(".DS_Store")] # Delet
 # len(c1_data_path)
 
 # Preprocessing 
-image_size = (32,32)
+image_size = (150,150)
 seed=5
 validation_split=0.2
-# shuffle='False'
-# dataset_train,dataset_test = train_test_split(PATH,image_size,seed,validation_split)
 
 if "dataset-{0}-{1}.npz".format(image_size[0],image_size[1]) not in os.listdir("./"):
     X,y = train_test_split2(PATH,image_size,seed,validation_split)
 else: 
     dataset = np.load("dataset-{0}-{1}.npz".format(image_size[0],image_size[1]))
     X,y = dataset["x"],dataset["y"]
-    #y = y.reshape((150,1))
 print("Dataset Loaded!")
 
 # Analysis of dataset
@@ -55,28 +52,20 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20,random_
 y_train = to_categorical(y_train,len(classes))
 y_test = to_categorical(y_test,len(classes))
 
-#Show few images
-plt.figure()
-for i in range(8):
-    plt.subplot(180+i+1)
-    plt.imshow(X_train[i])
-#plt.show()
-
-
 # Normailisation
 X_train = X_train/255
 X_test = X_test/255
 print(X_train.shape)
 
-img_size = 32
+img_size = 150
 base_model = DenseNet201(include_top = False,
                          weights = 'imagenet',
                          input_shape = (img_size,img_size,3))
 
-for layer in base_model.layers[:675]:
+for layer in base_model.layers[:300]:
     layer.trainable = False
 
-for layer in base_model.layers[675:]:
+for layer in base_model.layers[300:]:
     layer.trainable = True
 
 model = Sequential()
@@ -85,7 +74,7 @@ model.add(GlobalAveragePooling2D())
 model.add(Dense(len(classes), activation=tf.nn.softmax))
 model.compile(optimizer = tf.keras.optimizers.Adam(lr = 0.001), loss = 'categorical_crossentropy', metrics=['accuracy'])
 
-filepath= "model_pokemon.h5"
+filepath= "model_denseNet201_pokemon.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max', save_weights_only=False)
 
 early_stopping = EarlyStopping(monitor='val_loss',min_delta = 0, patience = 5, verbose = 1, restore_best_weights=True)
@@ -104,6 +93,15 @@ callbacks_list = [
 
 hist = model.fit(X_train,y_train,validation_data=(X_test,y_test),epochs=50,batch_size=32, callbacks=callbacks_list)
 
+plt.style.use('fivethirtyeight')
+plt.figure(figsize=(14,14))
+plt.plot(hist.history['accuracy'],label='accuracy',color='green')
+plt.plot(hist.history['val_accuracy'],label='accuracy',color='red')
+plt.legend(["training data","validation data"])
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.yticks(np.arange(0, 1, step=0.04))
+plt.show()
 
 # hist = model.fit_generator(datagen.flow(X_train,y_train,batch_size=32),
 #                                         validation_data=testgen.flow(X_test,y_test,batch_size=32),
