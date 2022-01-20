@@ -138,7 +138,6 @@ PokemonData/.DS_Store
 *.npz
 *.jpeg
 
-denseNet121_classification.py
 *.asp
 *.jpg~c200
 *.sb-334870d9-nlD60H
