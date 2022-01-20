@@ -47,3 +47,8 @@ def get_test_dataset(X,y,reduction_rate):
     print("Reduced")
     return X_reduced,y_reduced
 
+def load_prediction_img(image_path,img_size):
+    img = load_img(image_path,target_size=img_size,interpolation='nearest')
+    img_arr = img_to_array(img)
+    img_arr = img_arr / 255
+    return img_arr

@@ -28,7 +28,7 @@ from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 
 from sklearn.model_selection import GridSearchCV
-
+from sklearn.metrics import classification_report
 import os
 
 from tensorflow.keras import preprocessing
@@ -37,6 +37,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from utils import get_dataset 
 from utils import get_dataset_v2
 from utils import get_test_dataset
+from utils import load_prediction_img
 from sklearn.model_selection import train_test_split 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -223,7 +224,7 @@ def run2():
     model_denseNet169.add(Dense(len(classes), activation='softmax',name="Dense3"))
     model_denseNet169.summary()
     model_denseNet169.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    hist = model_denseNet169.fit(X_train,y_train,validation_data=(X_test,y_test),epochs=30,batch_size=32)
+    hist = model_denseNet169.fit(X_train,y_train,validation_data=(X_test,y_test),epochs=10,batch_size=32)
     model_denseNet169.save("./models/model_DenseNet169_and_weight-{0}-{1}-{2}.h5".format('adam',img_size[0],img_size[1]))
    
     plt.style.use('fivethirtyeight')
@@ -238,7 +239,31 @@ def run2():
 
 
 
-run2()
+def run3():
+    img_size = (150,150)
+    X_train,y_train,X_test,y_test = preprocessing(PATH="./PokemonData",image_size = img_size)
+    filepath = "./models/"+"model_DenseNet169_and_weight-{0}-{1}-{2}.h5".format('adam',image_size[0],image_size[1])
+    model_DenseNet = load_model(filepath)
+    ## Classification report
+
+    loss,acc = model_DenseNet.evaluate(X_test,y_test,verbose=2)
+    y_pred = model_DenseNet.predict(X_test)
+    pred = np.argmax(y_pred,axis=1)
+    print(pred)
+    ground = np.argmax(y_test,axis=1)
+    print(classification_report(ground,pred,target_names = classes))
+
+    ## Test with Pikachu
+    prediction_img = load_prediction_img('./tests/pika.jpg',img_size=img_size)
+    prediction_img = np.expand_dims(prediction_img, axis=0)
+    category = model_DenseNet.predict(prediction_img, verbose=1)
+    label = np.argmax(category,axis=1)
+    print(type(label),label)
+    print(classes[label[0]])
+
+    
+
+run3()
 
 # plt.figure(figsize=(20,20))
 # #for _ in range(3):
