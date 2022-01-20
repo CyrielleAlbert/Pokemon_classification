@@ -1,45 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jan 17 10:42:53 2022
-
-@author: sarramargi
-"""
-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jan 14 10:52:14 2022
-
-@author: sarramargi
-"""
-
-from tensorflow.keras.models import load_model
-import matplotlib.image as mpimg
-import numpy as np
-
-#%% Pre-processing step
-def preprocess_img(img_init):
-    img_reshaped = img_init.reshape
-    return img_prepro
-
-#%% Load the model
-# File path
-filepath = './unetFit.h5'
-
-model = load_model(filepath)
-
-# Generate predictions for samples
-image_test = mpimg.imread('./image_predict_1D.bmp')
-image_test_reshaped = image_test.reshape(1, 512,512, 1).astype('float32')
-image_test_reshaped =image_test_reshaped / 255
-predictions = model.predict(image_test_reshaped)
-print(predictions)
-
-# Check if predictions contains 1 which corresponds to the mask 
-one_value = np.argwhere(predictions>0)
-print(one_value)
-
 #%%
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -52,27 +10,31 @@ Created on Fri Jan 14 10:52:14 2022
 from tensorflow.keras.models import load_model
 from matplotlib import pyplot as plt
 import numpy as np
-from numpy import asarray
-from preprocess_img import preprocess_img
-from PIL import Image
-from matplotlib import image
-import skimage.io
-import cv2
+# from preprocess_img import preprocess_img
 
-#%% Image pre-process
-# Load the image
-img_test=cv2.imread('./Pikatchu_test.png', cv2.IMREAD_GRAYSCALE)
-# Process the data 
-img_process = preprocess_img(img_test)
+
+from utils import load_prediction_img
+    
+# %% Load the image
+img_size=(1,150,150)
+prediction_img = load_prediction_img('./Pikatchu_test.png',img_size)
 
 #%% Load the model
 filepath = 'model_denseNet201_pokemon.h5' # MAJ du modèle
-model = load_model(filepath)
+model_denseNet201 = load_model(filepath)
+
+# loss,acc = model_DenseNet.evaluate(X_test,y_test,verbose=2) ###
 
 #%% Generate predictions for samples
-predictions = model.predict(img_process)
+predictions = model_denseNet201.predict(prediction_img)
 print(predictions)
 
-# # Check if predictions contains 1 which corresponds to the mask
-one_value = np.argwhere(predictions>0)
-print(one_value)
+# # # Check if predictions contains 1 which corresponds to the mask
+# one_value = np.argwhere(predictions>0)
+# print(one_value)
+
+prediction_img = np.expand_dims(prediction_img, axis=0)
+category = model_denseNet201.predict(prediction_img, verbose=1)
+label = np.argmax(category,axis=1)
+print(type(label),label)
+# print(classes[label[0]]) # Pas compris 
