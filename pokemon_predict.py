@@ -16,8 +16,9 @@ import numpy as np
 from utils import load_prediction_img
     
 # %% Load the image
-img_size=(1,150,150)
-prediction_img = load_prediction_img('./Pikatchu_test.png',img_size)
+img_size=(150,150,3)
+prediction_img = load_prediction_img('./Voltorb_test.jpeg',img_size)
+prediction_img = np.expand_dims(prediction_img, axis=0)
 
 #%% Load the model
 filepath = 'model_denseNet201_pokemon.h5' # MAJ du modèle
@@ -30,11 +31,11 @@ predictions = model_denseNet201.predict(prediction_img)
 print(predictions)
 
 # # # Check if predictions contains 1 which corresponds to the mask
-# one_value = np.argwhere(predictions>0)
-# print(one_value)
+one_value = np.argwhere(predictions>0)
+print(one_value)
 
-prediction_img = np.expand_dims(prediction_img, axis=0)
-category = model_denseNet201.predict(prediction_img, verbose=1)
-label = np.argmax(category,axis=1)
-print(type(label),label)
-# print(classes[label[0]]) # Pas compris 
+# prediction_img = np.expand_dims(prediction_img, axis=0)
+# category = model_denseNet201.predict(prediction_img, verbose=1)
+# label = np.argmax(category,axis=1)
+# print(type(label),label)
+# # print(classes[label[0]]) # Pas compris 
