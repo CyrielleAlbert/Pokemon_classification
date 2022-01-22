@@ -68,10 +68,10 @@ base_model = DenseNet121(include_top = False,
                          weights = 'imagenet',
                          input_shape = (img_size,img_size,3))
 
-for layer in base_model.layers[:300]:
+for layer in base_model.layers[:-8]:
     layer.trainable = False
 
-for layer in base_model.layers[300:]:
+for layer in base_model.layers[-8:]:
     layer.trainable = True
 
 model = Sequential()
