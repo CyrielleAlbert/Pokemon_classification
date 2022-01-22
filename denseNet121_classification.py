@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Jan 20 17:32:43 2022
-
 @author: sarramargi
 """
 
@@ -24,7 +23,7 @@ from tensorflow.keras.utils import to_categorical
 from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 import os
-from utils import train_test_split2
+from utils import get_dataset_v2
 
 # Test prepreocess data
 PATH = './PokemonData'
@@ -40,7 +39,7 @@ seed=5
 validation_split=0.2
 
 if "dataset-{0}-{1}.npz".format(image_size[0],image_size[1]) not in os.listdir("./"):
-    X,y = train_test_split2(PATH,image_size,seed,validation_split)
+    X,y = get_dataset_v2(PATH,image_size)
 else: 
     dataset = np.load("dataset-{0}-{1}.npz".format(image_size[0],image_size[1]))
     X,y = dataset["x"],dataset["y"]
@@ -69,10 +68,10 @@ base_model = DenseNet121(include_top = False,
                          weights = 'imagenet',
                          input_shape = (img_size,img_size,3))
 
-for layer in base_model.layers[:600]:
+for layer in base_model.layers[:300]:
     layer.trainable = False
 
-for layer in base_model.layers[600:]:
+for layer in base_model.layers[300:]:
     layer.trainable = True
 
 model = Sequential()
@@ -114,6 +113,6 @@ plt.show()
 #                                         validation_data=testgen.flow(X_test,y_test,batch_size=32),
 #                                         epochs=50,
 #                                         callbacks=callbacks_list)
-# DenseNet-121
-# DenseNet-169
-# DenseNet-201
+# DenseNet-121 # Test sur PC école 300
+# DenseNet-169 # Envoi Cyrielle
+# DenseNet-201 # Test sur MAc 300

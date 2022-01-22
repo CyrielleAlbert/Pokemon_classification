@@ -144,3 +144,4 @@ PokemonData/.DS_Store
 *.sb-334870d9-FK2TVI
 *.jpg')
 model_denseNet201_pokemon.h5
+model_denseNet121_pokemon.h5
