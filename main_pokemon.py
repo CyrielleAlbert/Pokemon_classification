@@ -10,7 +10,6 @@ Created on Sun Jan 23 22:05:09 2022
 
 # Load data 
 
-
 # Pre-process
 
 # Call model 
