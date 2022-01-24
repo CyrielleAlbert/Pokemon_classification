@@ -13,6 +13,7 @@ from denseNet201_classification import create_denseNet201
 from denseNet169_classification import create_denseNet169
 from resNet151_classification import create_resNet152
 from CNN_simple_classification import create_CNN_simple
+from unet_classification import create_unet
 import os
 from utils import get_dataset_v2, preprocessing
 import numpy as np
@@ -34,7 +35,7 @@ else:
 print("Dataset Loaded!")
 
 
-# Pre-process
+# Pre-process data
 X_train,y_train,X_val,y_val,X_test,y_test=preprocessing(X,y)
 
 
@@ -50,9 +51,9 @@ denseNet201 = KerasClassifier(build_fn=create_denseNet201(), epochs=10, batch_si
 denseNet169 = KerasClassifier(build_fn=create_denseNet169(), epochs=10, batch_size=32)
 resNet152 = KerasClassifier(build_fn=create_resNet152(), epochs=10, batch_size=32)
 simple_CNN = KerasClassifier(build_fn=create_CNN_simple(), epochs=10, batch_size=32)
-# u_net = KerasClassifier(build_fn=XXX(), epochs=10, batch_size=32) #MAJ
+u_net = KerasClassifier(build_fn=create_unet(), epochs=10, batch_size=32)
 
-# Cross-validation with Kfold
+# Cross-validation with K-fold
 models=[]
 results=[]
 names=[]
@@ -64,7 +65,7 @@ models.append(('DenseNet201',denseNet201))
 models.append(('DenseNet169',denseNet169))
 models.append(('ResNet',resNet152))
 models.append(('Simple CNN',simple_CNN))
-# models.append(('U-Net',u_net))#MAJ
+models.append(('U-Net',u_net))
 
 
 for name,model in models :
@@ -77,7 +78,7 @@ for name,model in models :
 
 # Keep best model
 plt.figure()
-plt.boxplot(results,labels=name)
+plt.boxplot(results,labels=name) #MAJ
 
 # Tuning #MAJ
 
@@ -111,7 +112,3 @@ plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
 plt.yticks(np.arange(0, 1, step=0.04))
 plt.show()
-
-
-
-
