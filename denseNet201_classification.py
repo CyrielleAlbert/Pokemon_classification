@@ -57,7 +57,7 @@ y_test = to_categorical(y_test,len(classes))
 # X_test = X_test/255
 # print(X_train.shape)
 
-def create_denseNet201():
+def create_denseNet201(num_classes=150):
     img_size = 150
     base_model = DenseNet201(include_top = False,
                              weights = 'imagenet',
@@ -72,7 +72,7 @@ def create_denseNet201():
     model = Sequential()
     model.add(base_model)
     model.add(GlobalAveragePooling2D())
-    model.add(Dense(len(classes), activation=tf.nn.softmax))
+    model.add(Dense(num_classes, activation=tf.nn.softmax))
     model.compile(optimizer = tf.keras.optimizers.Adam(lr = 0.001), loss = 'categorical_crossentropy', metrics=['accuracy'])
     return model
 
