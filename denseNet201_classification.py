@@ -52,10 +52,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20,random_
 y_train = to_categorical(y_train,len(classes))
 y_test = to_categorical(y_test,len(classes))
 
-# Normailisation
-X_train = X_train/255
-X_test = X_test/255
-print(X_train.shape)
+# # Normailisation
+# X_train = X_train/255
+# X_test = X_test/255
+# print(X_train.shape)
 
 img_size = 150
 base_model = DenseNet201(include_top = False,
