@@ -57,11 +57,11 @@ y_test = to_categorical(y_test,len(classes))
 # X_test = X_test/255
 # print(X_train.shape)
 
-def create_denseNet201(num_classes=150):
+def create_denseNet201(num_classes=150, input_shape=(150,150,3)):
     img_size = 150
     base_model = DenseNet201(include_top = False,
                              weights = 'imagenet',
-                             input_shape = (img_size,img_size,3))
+                             input_shape = input_shape)
     
     for layer in base_model.layers[:300]:
         layer.trainable = False
