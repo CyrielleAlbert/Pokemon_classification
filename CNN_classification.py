@@ -343,9 +343,9 @@ def run_tuning():
     model = KerasClassifier(build_fn=define_model, verbose=2)
     # grid search epochs, batch size and optimizer
     poolings = ['avg','max']
-    optimizers = ['adam', 'sgd', 'adagrad', 'rmsprop']
+    optimizers = ['adam', 'sgd', 'adagrad']
     index_training =[500,600,675,700]
-    epochs = [5, 10, 15]
+    epochs = [10]
     batches = [32,64,128]
     n_combinaisons = 5
     cv = 3
