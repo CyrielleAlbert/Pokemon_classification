@@ -57,22 +57,24 @@ y_test = to_categorical(y_test,len(classes))
 # X_test = X_test/255
 # print(X_train.shape)
 
-img_size = 150
-base_model = DenseNet201(include_top = False,
-                         weights = 'imagenet',
-                         input_shape = (img_size,img_size,3))
-
-for layer in base_model.layers[:300]:
-    layer.trainable = False
-
-for layer in base_model.layers[300:]:
-    layer.trainable = True
-
-model = Sequential()
-model.add(base_model)
-model.add(GlobalAveragePooling2D())
-model.add(Dense(len(classes), activation=tf.nn.softmax))
-model.compile(optimizer = tf.keras.optimizers.Adam(lr = 0.001), loss = 'categorical_crossentropy', metrics=['accuracy'])
+def create_denseNet201():
+    img_size = 150
+    base_model = DenseNet201(include_top = False,
+                             weights = 'imagenet',
+                             input_shape = (img_size,img_size,3))
+    
+    for layer in base_model.layers[:300]:
+        layer.trainable = False
+    
+    for layer in base_model.layers[300:]:
+        layer.trainable = True
+    
+    model = Sequential()
+    model.add(base_model)
+    model.add(GlobalAveragePooling2D())
+    model.add(Dense(len(classes), activation=tf.nn.softmax))
+    model.compile(optimizer = tf.keras.optimizers.Adam(lr = 0.001), loss = 'categorical_crossentropy', metrics=['accuracy'])
+    return model
 
 filepath= "model_denseNet201_pokemon.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max', save_weights_only=False)
@@ -91,6 +93,7 @@ callbacks_list = [
         learning_rate_reduction
     ]
 
+model=create_denseNet201()
 hist = model.fit(X_train,y_train,validation_data=(X_test,y_test),epochs=50,batch_size=32, callbacks=callbacks_list)
 
 plt.style.use('fivethirtyeight')

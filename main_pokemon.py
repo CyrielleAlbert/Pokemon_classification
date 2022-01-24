@@ -10,6 +10,8 @@ Created on Sun Jan 23 22:05:09 2022
 from sklearn.model_selection import KFold, cross_val_score
 from sklearn.pipeline import make_pipeline
 from denseNet121_classification import create_denseNet121
+from denseNet201_classification import create_denseNet201
+
 # Load data 
 
 # Pre-process
@@ -24,9 +26,10 @@ num_classes=150
 scoring='accuracy'
 
 denseNet121_model = create_denseNet121()
+denseNet210_model = create_denseNet201()
 
 models.append(('DenseNet121', denseNet121_model))
-models.append(('DenseNet201', make_pipeline())) # MAJ
+models.append(('DenseNet201', denseNet210_model)) # MAJ
 models.append(('DenseNet169', make_pipeline()))
 models.append(('U-net', make_pipeline()))
 models.append(('ResNet', make_pipeline()))
