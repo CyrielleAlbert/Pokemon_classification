@@ -1,11 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jan 21 18:34:25 2022
-
-@author: margisar
-"""
-
-from os import listdir
+﻿from os import listdir
 from tensorflow.keras.preprocessing import image_dataset_from_directory
 from tensorflow.python.keras.preprocessing.image import img_to_array, load_img
 import numpy as np
