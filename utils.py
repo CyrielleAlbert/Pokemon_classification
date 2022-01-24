@@ -55,7 +55,7 @@ def load_prediction_img(image_path,img_size):
     img_arr = img_arr / 255
     return img_arr
 
-def preprocessing(PATH, image_size=(150,150),seed=5, validation_split=0.2, reduce_dataset=False,reduction_ratio=None):
+def preprocessing(X,y,image_size=(150,150),seed=5, validation_split=0.2, reduce_dataset=False,reduction_ratio=None):
     """ A function that load the dataset and split it into training and validation data
 
         Parameters:
@@ -74,12 +74,12 @@ def preprocessing(PATH, image_size=(150,150),seed=5, validation_split=0.2, reduc
 
     """
     
-    if "dataset-{0}-{1}.npz".format(image_size[0],image_size[1]) not in os.listdir("./Datasets"):
-        X,y = get_dataset_v2(PATH,image_size)
-    else: 
-        dataset = np.load("./Datasets/dataset-{0}-{1}.npz".format(image_size[0],image_size[1]))
-        X,y = dataset["x"],dataset["y"]
-    print("Dataset Loaded!")
+    # if "dataset-{0}-{1}.npz".format(image_size[0],image_size[1]) not in os.listdir("./Datasets"):
+    #     X,y = get_dataset_v2(PATH,image_size)
+    # else: 
+    #     dataset = np.load("./Datasets/dataset-{0}-{1}.npz".format(image_size[0],image_size[1]))
+    #     X,y = dataset["x"],dataset["y"]
+    # print("Dataset Loaded!")
 
     # Train-test-split and dataset reduction
     if reduce_dataset:
