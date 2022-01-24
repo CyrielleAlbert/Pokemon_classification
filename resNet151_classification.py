@@ -2,7 +2,7 @@
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.applications import ResNet152
 
-def create_resNet152(num_classes,input_shape):
+def create_resNet152(num_classes=150,input_shape=(150,150,3)):
     model= Sequential(name="ResNet152")
     model.add(ResNet152(include_top=False,input_shape=input_shape,pooling="avg"))
     for layer in model.layers[:143]:

@@ -1,9 +1,9 @@
 ﻿from tensorflow.keras.layers import Conv2D,MaxPool2D,BatchNormalization,Dropout,Flatten,Dense
 from tensorflow.keras.models import Sequential
 
-def create_CNN_simple(num_classes,img_shape):
+def create_CNN_simple(num_classes=150,input_shape=(150,150,3)):
     model_classic_CNN = Sequential(name='Classic_CNN')
-    model_classic_CNN.add(Conv2D(128,3,input_shape=(img_shape),activation='relu'))
+    model_classic_CNN.add(Conv2D(128,3,input_shape=(input_shape),activation='relu'))
     model_classic_CNN.add(MaxPool2D())
     model_classic_CNN.add(Conv2D(128,3,activation='relu'))
     model_classic_CNN.add(MaxPool2D())
