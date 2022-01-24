@@ -48,11 +48,11 @@ X_train,y_train,X_val,y_val,X_test,y_test=preprocessing(X,y)
 # create_resNet()
 
 # Buil models as classifiers
-denseNet121 = KerasClassifier(build_fn=create_denseNet121, epochs=10, batch_size=32)
-denseNet201 = KerasClassifier(build_fn=create_denseNet201, epochs=10, batch_size=32)
-denseNet169 = KerasClassifier(build_fn=create_denseNet169, epochs=10, batch_size=32)
-resNet152 = KerasClassifier(build_fn=create_resNet152, epochs=10, batch_size=32)
-simple_CNN = KerasClassifier(build_fn=create_CNN_simple, epochs=10, batch_size=32)
+denseNet121 = KerasClassifier(build_fn=create_denseNet121, epochs=4, batch_size=32)
+denseNet201 = KerasClassifier(build_fn=create_denseNet201, epochs=4, batch_size=32)
+denseNet169 = KerasClassifier(build_fn=create_denseNet169, epochs=4, batch_size=32)
+resNet152 = KerasClassifier(build_fn=create_resNet152, epochs=4, batch_size=32)
+simple_CNN = KerasClassifier(build_fn=create_CNN_simple, epochs=30, batch_size=32)
 u_net = KerasClassifier(build_fn=create_unet, epochs=10, batch_size=32)
 
 # Cross-validation with K-fold
@@ -73,7 +73,7 @@ print("------------------------------------------------\n----------------CROSS V
 
 for name,model in models :
     kfold= KFold(n_splits=num_classes)
-    cv_results=cross_val_score(model, X_train, y_train, cv=kfold, scoring=scoring)
+    cv_results=cross_val_score(model, X_train, np.argmax(y_train, axis=-1), cv=kfold, scoring=scoring)
     results.append(cv_results)
     names.append(name)
     print('%s: %f %f', name, cv_results.mean(), cv_results.std())
