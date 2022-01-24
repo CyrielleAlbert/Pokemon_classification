@@ -322,12 +322,12 @@ def run_ResNet152():
     plt.show()
 
 def run_tuning():
-    img_size=(150,150,3)
+    img_size=(32,32,3)
     X_train,y_train,X_val,y_val,X_test,y_test = preprocessing(PATH="./PokemonData",image_size = img_size,reduce_dataset=True,reduction_ratio=0.5)   
     
     def define_model(pooling,index_training,optimizer):
         model = Sequential(name="DenseNet")
-        model.add(DenseNet121(include_top=False,input_shape=img_size,pooling=pooling))
+        model.add(DenseNet169(include_top=False,input_shape=img_size,pooling=pooling))
         print(len(model.layers))
         for layer in model.layers[:index_training]:
             layer.trainable = False
@@ -344,14 +344,14 @@ def run_tuning():
     # grid search epochs, batch size and optimizer
     poolings = ['avg','max']
     optimizers = ['adam', 'sgd', 'adagrad']
-    index_training =[500,600,675,700]
+    index_training =[600,675]
     epochs = [10]
-    batches = [32,64,128]
+    batches = [32,64]
     n_combinaisons = 5
     cv = 3
 
     param_grid = dict(pooling=poolings, index_training=index_training, epochs=epochs, batch_size=batches,optimizer=optimizers)
-    random_search  = RandomizedSearchCV(estimator=model, param_distributions=param_grid, n_iter=n_combinaisons, cv=cv, verbose=2,error_score='raise')
+    random_search  = RandomizedSearchCV(estimator=model, param_distributions=param_grid, n_iter=n_combinaisons, cv=cv, verbose=2,error_score='raise',n_jobs=-1)
     random_search_result = random_search.fit(X_train, y_train, validation_data=(X_val, y_val))
         
     

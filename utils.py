@@ -4,6 +4,7 @@ from tensorflow.python.keras.preprocessing.image import img_to_array, load_img
 import numpy as np
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
+from torch import classes
 
 PATH_DATASET = "./PokemonData/"
 
@@ -55,7 +56,7 @@ def load_prediction_img(image_path,img_size):
     img_arr = img_arr / 255
     return img_arr
 
-def preprocessing(X,y,image_size=(150,150),seed=5, validation_split=0.2, reduce_dataset=False,reduction_ratio=None):
+def preprocessing(X,y,seed=5, reduce_dataset=False,reduction_ratio=None):
     """ A function that load the dataset and split it into training and validation data
 
         Parameters:
@@ -73,13 +74,8 @@ def preprocessing(X,y,image_size=(150,150),seed=5, validation_split=0.2, reduce_
             y_test  (numpy.ndarray): Validation partition of images categories
 
     """
-    
-    # if "dataset-{0}-{1}.npz".format(image_size[0],image_size[1]) not in os.listdir("./Datasets"):
-    #     X,y = get_dataset_v2(PATH,image_size)
-    # else: 
-    #     dataset = np.load("./Datasets/dataset-{0}-{1}.npz".format(image_size[0],image_size[1]))
-    #     X,y = dataset["x"],dataset["y"]
-    # print("Dataset Loaded!")
+    classes = [ f for f in listdir('./PokemonData') if not f.startswith(".DS_Store")]
+
 
     # Train-test-split and dataset reduction
     if reduce_dataset:
@@ -91,8 +87,8 @@ def preprocessing(X,y,image_size=(150,150),seed=5, validation_split=0.2, reduce_
         X_val, X_test,y_val,y_test = train_test_split(X_test_val,y_test_val,test_size=0.5,random_state=seed,stratify=y_test_val)
 
     # Prepare category    
-    y_train = to_categorical(y_train,len(y))
-    y_test = to_categorical(y_test,len(y))
-    y_val = to_categorical(y_val,len(y))
+    y_train = to_categorical(y_train,len(classes))
+    y_test = to_categorical(y_test,len(classes))
+    y_val = to_categorical(y_val,len(classes))
 
     return X_train,y_train,X_val,y_val,X_test,y_test
